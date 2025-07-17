@@ -1,0 +1,21 @@
+BasedOnStyle: LLVM
+---
+Language: Cpp
+
+AlwaysBreakTemplateDeclarations: Yes
+
+IncludeBlocks: Regroup
+
+IncludeCategories:
+- Regex: '^"'
+  Priority: 1
+- Regex: "^<simply/"
+  Priority: 2
+- Regex: "^<[^./]*[./]"
+  Priority: 3
+- Regex: "^<[^./]*>$"
+  Priority: 4
+
+QualifierAlignment: Custom
+
+QualifierOrder: [ "inline", "static", "friend", "constexpr", "const", "volatile", "type" ]

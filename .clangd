@@ -1,0 +1,4 @@
+CompileFlags:
+  Remove: [ -fconcepts-diagnostics-depth=*, -fdeps-format=*, -fmodule-mapper=*, -fmodules-ts ]
+Diagnostics:
+  UnusedIncludes: None

@@ -1,0 +1,5 @@
+/.cache/
+/.direnv/
+/.venv/
+/build/
+/.envrc
