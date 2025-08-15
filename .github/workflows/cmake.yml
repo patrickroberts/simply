@@ -19,7 +19,7 @@ jobs:
         build_type: [ Debug ]
         compiler:
           - { c: gcc, cxx: g++, version: "14" }
-          - { c: gcc, cxx: g++, version: "15" }
+          # - { c: gcc, cxx: g++, version: "15" } # Only available on Ubuntu 25.04 "Plucky"
           - { c: clang, cxx: clang++, version: "19" }
           - { c: clang, cxx: clang++, version: "20" }
 
@@ -29,14 +29,15 @@ jobs:
     - name: Install ${{ matrix.compiler.c }}-${{ matrix.compiler.version }}
       run: |
         if [[ "${{ matrix.compiler.c }}" == "gcc" ]]; then
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends gcc-${{ matrix.compiler.version }} g++-${{ matrix.compiler.version }}
+          PACKAGES="gcc-${{ matrix.compiler.version }} g++-${{ matrix.compiler.version }}"
         elif [[ "${{ matrix.compiler.c }}" == "clang" ]]; then
+          CODENAME=$(lsb_release -sc)
+          PACKAGES=clang-${{ matrix.compiler.version }}
           wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/llvm.gpg > /dev/null
-          sudo add-apt-repository "deb http://apt.llvm.org/plucky/ llvm-toolchain-plucky-${{ matrix.compiler.version }} main"
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clang-${{ matrix.compiler.version }}
+          sudo add-apt-repository "deb http://apt.llvm.org/${CODENAME}/ llvm-toolchain-${CODENAME}-${{ matrix.compiler.version }} main"
         fi
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends ${PACKAGES}
 
     - name: Configure CMake
       run: |
