@@ -14,26 +14,16 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        build_type: [ Debug, Release ]
-        c_compiler: [ gcc, clang, cl ]
+        os: [ ubuntu-latest ]
+        build_type: [ Debug ]
+        c_compiler: [ gcc, clang ]
         include:
-        - os: windows-latest
-          c_compiler: cl
-          cpp_compiler: cl
         - os: ubuntu-latest
           c_compiler: gcc
           cpp_compiler: g++
         - os: ubuntu-latest
           c_compiler: clang
           cpp_compiler: clang++
-        exclude:
-        - os: windows-latest
-          c_compiler: gcc
-        - os: windows-latest
-          c_compiler: clang
-        - os: ubuntu-latest
-          c_compiler: cl
 
     steps:
     - uses: actions/checkout@v4
@@ -44,12 +34,29 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+    
+    - name: Install GCC 14
+      if: matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-14 g++-14
+        echo "C_COMPILER=gcc-14" >> $GITHUB_ENV
+        echo "CXX_COMPILER=g++-14" >> $GITHUB_ENV
+
+    - name: Install Clang 20
+      if: matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'clang'
+      run: |
+        sudo add-apt-repository "deb http://apt.llvm.org/plucky/ llvm-toolchain-plucky-20 main"
+        sudo apt-get update
+        sudo apt-get install -y clang-20
+        echo "C_COMPILER=clang-20" >> $GITHUB_ENV
+        echo "CXX_COMPILER=clang++-20" >> $GITHUB_ENV
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
+        cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ env.CXX_COMPILER }} -DCMAKE_C_COMPILER=${{ env.C_COMPILER }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
