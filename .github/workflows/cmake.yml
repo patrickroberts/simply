@@ -29,24 +29,34 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Dependencies
+    - name: Install dependencies
+      shell: bash
       run: |
         apt-get update
-        apt-get install -y --no-install-recommends curl git tar
-        curl -L https://github.com/Kitware/CMake/releases/download/v3.30.4/cmake-3.30.4-linux-x86_64.tar.gz \
-          -o cmake.tar.gz
-        mkdir -p $HOME/cmake
-        tar -xzf cmake.tar.gz --strip-components=1 -C $HOME/cmake
-        echo "$HOME/cmake/bin" >> $GITHUB_PATH
+        apt-get install -y --no-install-recommends ca-certificates gnupg lsb-release wget
+
+        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main" > /etc/apt/sources.list.d/kitware.list
+
+        apt-get update
+        apt-get install -y --no-install-recommends cmake git
 
     - name: Configure CMake
+      shell: bash
       run: |
+        if [[ "${{ matrix.toolchain.name }}" == clang* ]]; then
+          STDLIB_FLAGS="-DCMAKE_CXX_FLAGS=-stdlib=libc++ -DCMAKE_EXE_LINKER_FLAGS=-stdlib=libc++"
+        else
+          STDLIB_FLAGS=""
+        fi
+
         cmake -B build \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DCMAKE_C_COMPILER=${{ matrix.toolchain.c_compiler }} \
           -DCMAKE_CXX_COMPILER=${{ matrix.toolchain.cxx_compiler }} \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
           -DSIMPLY_INSTALL_PRE_COMMIT_HOOKS=OFF \
+          ${STDLIB_FLAGS} \
           -S .
 
     - name: Build
