@@ -1,4 +1,5 @@
 include(FetchContent)
+include(GoogleTest)
 
 FetchContent_Declare(
   googletest
@@ -12,3 +13,4 @@ target_link_libraries(counters simply)
 
 add_executable(stream stream.cpp)
 target_link_libraries(stream simply GTest::gtest_main)
+gtest_discover_tests(stream)

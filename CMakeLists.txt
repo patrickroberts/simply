@@ -25,4 +25,6 @@ target_compile_features(simply INTERFACE cxx_std_26)
 
 target_include_directories(simply INTERFACE include)
 
+enable_testing()
+
 add_subdirectory(tests)
