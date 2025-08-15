@@ -46,7 +46,7 @@ int main() {
 
 ### Supported Compilers
 
-- Clang 20
+- Clang 19, 20
 - GCC 14, 15
 
 ### Features

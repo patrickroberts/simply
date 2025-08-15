@@ -1,0 +1,56 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build with ${{ matrix.compiler.c }}-${{ matrix.compiler.version }} in ${{ matrix.build_type }}
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        build_type: [ Debug ]
+        compiler:
+          - { c: gcc, cxx: g++, version: "14" }
+          - { c: gcc, cxx: g++, version: "15" }
+          - { c: clang, cxx: clang++, version: "19" }
+          - { c: clang, cxx: clang++, version: "20" }
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install ${{ matrix.compiler.c }}-${{ matrix.compiler.version }}
+      run: |
+        if [[ "${{ matrix.compiler.c }}" == "gcc" ]]; then
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc-${{ matrix.compiler.version }} g++-${{ matrix.compiler.version }}
+        elif [[ "${{ matrix.compiler.c }}" == "clang" ]]; then
+          wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/llvm.gpg > /dev/null
+          sudo add-apt-repository "deb http://apt.llvm.org/plucky/ llvm-toolchain-plucky-${{ matrix.compiler.version }} main"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-${{ matrix.compiler.version }}
+        fi
+
+    - name: Configure CMake
+      run: |
+        cmake -B build \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCMAKE_C_COMPILER=${{ matrix.compiler.c }}-${{ matrix.compiler.version }} \
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cxx }}-${{ matrix.compiler.version }} \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DSIMPLY_INSTALL_PRE_COMMIT_HOOKS=OFF \
+          -S ${{ github.workspace }}
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build_type }}
+
+    - name: Test
+      working-directory: build
+      run: ctest --build-config ${{ matrix.build_type }}
