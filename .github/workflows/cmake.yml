@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build with ${{ matrix.compiler.c }}-${{ matrix.compiler.version }} in ${{ matrix.build_type }}
+    name: Build ${{ matrix.build_type }} using ${{ matrix.toolchain.name }}
 
     runs-on: ubuntu-latest
 
@@ -16,38 +16,38 @@ jobs:
       fail-fast: false
 
       matrix:
-        build_type: [ Debug ]
-        compiler:
-          - { c: gcc, cxx: g++, version: "14" }
-          # - { c: gcc, cxx: g++, version: "15" } # Only available on Ubuntu 25.04 "Plucky"
-          - { c: clang, cxx: clang++, version: "19" }
-          - { c: clang, cxx: clang++, version: "20" }
+        build_type: [ Debug, RelWithDebInfo ]
+        toolchain:
+          - { name: gcc-14, c_compiler: gcc, cxx_compiler: g++, version: "14", image: "gcc:14" }
+          - { name: gcc-15, c_compiler: gcc, cxx_compiler: g++, version: "15", image: "gcc:15" }
+          - { name: clang-19, c_compiler: clang-19, cxx_compiler: clang++-19, version: "19", image: "ghcr.io/silkeh/clang:19" }
+          - { name: clang-20, c_compiler: clang-20, cxx_compiler: clang++-20, version: "20", image: "ghcr.io/silkeh/clang:20" }
+
+    container:
+      image: ${{ matrix.toolchain.image }}
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install ${{ matrix.compiler.c }}-${{ matrix.compiler.version }}
+    - name: Install Dependencies
       run: |
-        if [[ "${{ matrix.compiler.c }}" == "gcc" ]]; then
-          PACKAGES="gcc-${{ matrix.compiler.version }} g++-${{ matrix.compiler.version }}"
-        elif [[ "${{ matrix.compiler.c }}" == "clang" ]]; then
-          CODENAME=$(lsb_release -sc)
-          PACKAGES=clang-${{ matrix.compiler.version }}
-          wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/llvm.gpg > /dev/null
-          sudo add-apt-repository "deb http://apt.llvm.org/${CODENAME}/ llvm-toolchain-${CODENAME}-${{ matrix.compiler.version }} main"
-        fi
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends ${PACKAGES}
+        apt-get update
+        apt-get install -y --no-install-recommends curl git tar
+        curl -L https://github.com/Kitware/CMake/releases/download/v3.30.4/cmake-3.30.4-linux-x86_64.tar.gz \
+          -o cmake.tar.gz
+        mkdir -p $HOME/cmake
+        tar -xzf cmake.tar.gz --strip-components=1 -C $HOME/cmake
+        echo "$HOME/cmake/bin" >> $GITHUB_PATH
 
     - name: Configure CMake
       run: |
         cmake -B build \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DCMAKE_C_COMPILER=${{ matrix.compiler.c }}-${{ matrix.compiler.version }} \
-          -DCMAKE_CXX_COMPILER=${{ matrix.compiler.cxx }}-${{ matrix.compiler.version }} \
+          -DCMAKE_C_COMPILER=${{ matrix.toolchain.c_compiler }} \
+          -DCMAKE_CXX_COMPILER=${{ matrix.toolchain.cxx_compiler }} \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
           -DSIMPLY_INSTALL_PRE_COMMIT_HOOKS=OFF \
-          -S ${{ github.workspace }}
+          -S .
 
     - name: Build
       run: cmake --build build --config ${{ matrix.build_type }}
