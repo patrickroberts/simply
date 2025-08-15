@@ -46,14 +46,14 @@ struct labeled : simply::member_affordance_base {
 template <typename CountT, typename Self>
 struct simply::iface<copy_countable<CountT>, Self> {
   constexpr auto copy_count(this const Self &self) -> CountT {
-    return simply::impl<copy_countable<CountT>, Self>::fn(self);
+    return simply::fn<copy_countable<CountT>, Self>(self);
   }
 };
 
 template <typename LabelT, typename Self>
 struct simply::iface<labeled<LabelT>, Self> {
   constexpr auto label(this const Self &self) -> LabelT {
-    return simply::impl<labeled<LabelT>, Self>::fn(self);
+    return simply::fn<labeled<LabelT>, Self>(self);
   }
 };
 

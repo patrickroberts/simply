@@ -22,7 +22,7 @@ struct extractable : simply::member_affordance_base {
 template <typename In, typename Self>
 struct iface<simply::extractable<In>, Self> {
   friend constexpr auto operator>>(In &out, const Self &self) -> In & {
-    return simply::impl<simply::extractable<In>, Self>::fn(self, out);
+    return simply::fn<simply::extractable<In>, Self>(self, out);
   }
 };
 

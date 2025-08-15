@@ -83,7 +83,7 @@ public:
     requires simply::destroy_affordance<Affordance>
   {
     using destroy = simply::destroy_affordance_t<Affordance>;
-    simply::impl<destroy, dyn>::fn(*this);
+    simply::fn<destroy, dyn>(*this);
   }
 };
 
@@ -116,7 +116,8 @@ concept _allocator_storage_dyn =
                               simply::allocator_storage>;
 
 template <typename T, typename Dyn>
-using _storage_impl_t = simply::impl<typename Dyn::storage_type, T>;
+inline constexpr const auto &_storage_fn =
+    simply::fn<typename Dyn::storage_type, T>;
 
 template <simply::member_affordance Affordance, typename T,
           simply::_allocator_storage_dyn Dyn, typename R, typename Self,
@@ -126,9 +127,9 @@ struct impl<simply::impl<Affordance, T>, Dyn,
   static constexpr auto fn(Self dyn, Args... args) noexcept(NoExcept) -> R {
     using self_type = simply::apply_cvref_t<Self, T>;
 
-    const auto pointer = simply::_storage_impl_t<T, Dyn>::fn(dyn.get());
-    return simply::impl<Affordance, T>::fn(std::forward<self_type>(*pointer),
-                                           std::forward<Args>(args)...);
+    const auto pointer = simply::_storage_fn<T, Dyn>(dyn.get());
+    return simply::fn<Affordance, T>(std::forward<self_type>(*pointer),
+                                     std::forward<Args>(args)...);
   }
 };
 
@@ -146,9 +147,9 @@ struct impl<simply::impl<Affordance, T>, Dyn,
         dyn.get_allocator(),
         std::in_place_type<T>,
         simply::elide([&] -> T {
-          const auto pointer = simply::_storage_impl_t<T, Dyn>::fn(dyn.get());
-          return simply::impl<Affordance, T>::fn(
-              std::forward<self_type>(*pointer), std::forward<Args>(args)...);
+          const auto pointer = simply::_storage_fn<T, Dyn>(dyn.get());
+          return simply::fn<Affordance, T>(std::forward<self_type>(*pointer),
+                                           std::forward<Args>(args)...);
         }),
     };
   }
@@ -167,7 +168,7 @@ struct impl<simply::impl<Affordance, T>, Dyn,
     }
 
     auto alloc = simply::_rebind_alloc<T>(dyn.get_allocator());
-    const auto pointer = simply::_storage_impl_t<T, Dyn>::fn(dyn.get());
+    const auto pointer = simply::_storage_fn<T, Dyn>(dyn.get());
 
     using traits = std::allocator_traits<decltype(alloc)>;
 

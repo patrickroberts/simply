@@ -79,9 +79,9 @@ public:
         object_ptr(
             other.valueless_after_move()
                 ? nullptr
-                : simply::impl<
+                : simply::fn<
                       simply::copy_affordance_t<typename Self::affordance_type>,
-                      Self>::fn(static_cast<const Self &>(other))
+                      Self>(static_cast<const Self &>(other))
                       ._release()) {}
 
   constexpr iface(iface &&other) noexcept

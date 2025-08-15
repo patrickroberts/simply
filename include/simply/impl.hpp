@@ -13,6 +13,9 @@ struct impl {
   static constexpr auto fn = Affordance::template fn<T>;
 };
 
+template <typename Affordance, typename T>
+inline constexpr const auto &fn = simply::impl<Affordance, T>::fn;
+
 template <simply::member_affordance Affordance, typename T>
 struct affordance_traits<Affordance, T> {
   using function_type = decltype(Affordance::template fn<T>);

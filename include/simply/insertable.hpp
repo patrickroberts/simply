@@ -22,7 +22,7 @@ struct insertable : simply::member_affordance_base {
 template <typename Out, typename Self>
 struct iface<simply::insertable<Out>, Self> {
   friend constexpr auto operator<<(Out &out, const Self &self) -> Out & {
-    return simply::impl<simply::insertable<Out>, Self>::fn(self, out);
+    return simply::fn<simply::insertable<Out>, Self>(self, out);
   }
 };
 

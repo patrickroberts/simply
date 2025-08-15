@@ -42,7 +42,7 @@ inline constexpr simply::vtable<Affordance, Self>
 template <simply::member_affordance Affordance, typename Self, typename T>
 inline constexpr simply::vtable<Affordance, Self>
     vtable_for<Affordance, Self, T> = {
-        .fn = &simply::impl<simply::impl<Affordance, T>, Self>::fn,
+        .fn = &simply::fn<simply::impl<Affordance, T>, Self>,
 };
 
 } // namespace simply
