@@ -94,4 +94,5 @@ int main() {
   - `std::copyable_function`
   - `std::move_only_function`
   - `std::function_ref`
+  - `std::any`
   - `std::ranges::any_view`
