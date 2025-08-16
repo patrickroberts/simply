@@ -31,7 +31,7 @@ struct simply::iface<insertable, Self> {
 int main() {
   using namespace std::string_literals;
 
-  struct affordances : simply::conjunction<insertable, simply::destructible> {};
+  struct affordances : simply::composes<insertable, simply::destructible> {};
 
   std::vector<simply::dyn<affordances>> values;
   values.emplace_back("Hello, world!"s);
@@ -51,11 +51,17 @@ int main() {
 
 ### Features
 
-- `dyn` for type erasure of affordances
+- `dyn<Affordance, Storage, Dispatch>` for type erasure of affordances
 - Concepts:
   - `affordance<Affordance>`
+  - `fundamental_affordance<Affordance>`
+  - `compound_affordance<Affordance>`
+  - `composition_affordance<Affordance>`
+  - `choice_affordance<Affordance>`
   - `affords<T, Affordance>`
 - Predefined affordances for common use-cases:
+  - `composes<Affordances...>`
+  - `chooses<Affordances...>`
   - `destructible`
   - `move_constructible`
   - `copy_constructible`
@@ -69,8 +75,7 @@ int main() {
 
 ### Planned Features
 
-- `disjunction` to compose affordances as unions
-- `inplace_storage`
+- `inplace_storage<Size, Align>`
 - `shared_storage`
 - `copy_on_write_storage`
 - `invocable` affordance template

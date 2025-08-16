@@ -59,11 +59,9 @@ struct simply::iface<labeled<LabelT>, Self> {
 
 // test dyn<countable> at compile-time
 static_assert([] {
-  // compose the affordances into a compound affordance
   struct countable
-      : simply::conjunction<copy_countable<int>, labeled<char>,
-                            simply::copy_constructible, simply::destructible> {
-  };
+      : simply::composes<copy_countable<int>, labeled<char>,
+                         simply::copy_constructible, simply::destructible> {};
 
   using dyn = simply::dyn<countable>;
   static_assert(requires {

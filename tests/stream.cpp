@@ -9,8 +9,8 @@
 TEST(Stream, TypeErasedInsertion) {
   using namespace std::string_literals;
 
-  struct affordances : simply::conjunction<simply::insertable<std::ostream>,
-                                           simply::destructible> {};
+  struct affordances : simply::composes<simply::insertable<std::ostream>,
+                                        simply::destructible> {};
 
   std::vector<simply::dyn<affordances>> values;
   values.emplace_back("Hello, world!"s);

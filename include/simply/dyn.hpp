@@ -109,12 +109,14 @@ struct impl<Affordance, Dyn, R(Self, Args...) noexcept(NoExcept)> {
   }
 };
 
+// TODO refactor impl specializations below to not assume allocator_storage
 template <typename Dyn>
 concept _allocator_storage_dyn =
     simply::specialization_of<Dyn, simply::dyn> and
     simply::specialization_of<typename Dyn::storage_type,
                               simply::allocator_storage>;
 
+// TODO resolve storage type from choices by checking each compatibility with T
 template <typename T, typename Dyn>
 inline constexpr const auto &_storage_fn =
     simply::fn<typename Dyn::storage_type, T>;

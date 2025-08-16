@@ -15,7 +15,7 @@ struct copy_constructible : simply::copy_affordance_base {
 };
 
 struct copyable
-    : simply::conjunction<simply::copy_constructible, simply::movable> {};
+    : simply::composes<simply::copy_constructible, simply::movable> {};
 
 } // namespace simply
 

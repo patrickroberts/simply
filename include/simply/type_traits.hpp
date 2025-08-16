@@ -8,6 +8,8 @@ namespace simply {
 
 struct affordance_base {};
 
+struct compound_affordance_base : simply::affordance_base {};
+
 struct member_affordance_base : simply::affordance_base {};
 
 struct constructor_affordance_base : simply::member_affordance_base {};
@@ -48,7 +50,10 @@ using destroy_affordance_t =
                                           simply::destroy_affordance_base>;
 
 template <typename... Ts>
-struct conjunction : simply::affordance_base {};
+struct composes : simply::compound_affordance_base {};
+
+template <typename... Ts>
+struct chooses : simply::compound_affordance_base {};
 
 template <typename, template <typename...> typename>
 inline constexpr bool is_specialization_of_v = false;
@@ -64,13 +69,14 @@ using base_specialization_of_t = decltype(simply::_as_specialization_of<Base>(
     static_cast<Derived *>(nullptr)));
 
 template <typename T>
-using base_conjunction_t =
-    simply::base_specialization_of_t<T, simply::conjunction>;
+using base_composition_t =
+    simply::base_specialization_of_t<T, simply::composes>;
 
 template <typename T>
 inline constexpr bool enable_affordance =
     std::derived_from<T, simply::affordance_base>;
 
+// TODO integrate this customization point with impl and/or affordance_traits
 template <typename Affordance, typename T>
 inline constexpr bool enable_affordance_for =
     requires { &Affordance::template fn<T>; };
@@ -78,7 +84,7 @@ inline constexpr bool enable_affordance_for =
 template <typename T, typename Tag>
 inline constexpr bool enable_affordance_tag = std::derived_from<T, Tag>;
 
-template <typename Affordance, typename Unique = simply::conjunction<>>
+template <typename Affordance, typename Unique = simply::composes<>>
 struct unique_fundamental_affordances;
 
 template <typename Affordance>

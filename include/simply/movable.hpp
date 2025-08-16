@@ -14,7 +14,7 @@ struct move_constructible : simply::move_affordance_base {
 };
 
 struct movable
-    : simply::conjunction<simply::move_constructible, simply::destructible> {};
+    : simply::composes<simply::move_constructible, simply::destructible> {};
 
 } // namespace simply
 

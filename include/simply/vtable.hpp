@@ -11,7 +11,7 @@ struct vtable
                      Self> {};
 
 template <simply::fundamental_affordance... Affordances, typename Self>
-struct vtable<simply::conjunction<Affordances...>, Self>
+struct vtable<simply::composes<Affordances...>, Self>
     : simply::vtable<Affordances, Self>... {};
 
 template <simply::fundamental_affordance Affordance, typename Self>
@@ -30,8 +30,8 @@ inline constexpr simply::vtable<Affordance, Self> vtable_for = {
 
 template <simply::fundamental_affordance... Affordances, typename Self,
           typename T>
-inline constexpr simply::vtable<simply::conjunction<Affordances...>, Self>
-    vtable_for<simply::conjunction<Affordances...>, Self, T> = {
+inline constexpr simply::vtable<simply::composes<Affordances...>, Self>
+    vtable_for<simply::composes<Affordances...>, Self, T> = {
         simply::vtable_for<Affordances, Self, T>...,
 };
 
