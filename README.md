@@ -24,7 +24,7 @@ struct insertable : simply::member_affordance_base {
 template <typename Self>
 struct simply::iface<insertable, Self> {
   friend auto operator<<(std::ostream &out, const Self &self) -> std::ostream & {
-    return simply::fn<insertable, Self>(self, out);
+    return simply::fn<insertable>(self, out);
   }
 };
 
