@@ -73,7 +73,7 @@ public:
   using void_pointer = traits::void_pointer;
   using const_void_pointer = traits::const_void_pointer;
 
-  // TODO use this->alloc instead of other.alloc to copy other->object_ptr
+  // BUG use this->alloc instead of other.alloc to copy other->object_ptr
   constexpr iface(const iface &other)
       : alloc(traits::select_on_container_copy_construction(other.alloc)),
         object_ptr(

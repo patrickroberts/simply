@@ -12,6 +12,9 @@
 
 namespace simply {
 
+// TODO reconsider template parameters to avoid requiring user to explicitly
+// categorize affordances, or provide a type alias template to categorize them
+// and inject defaults. Rename to `basic_dyn`?
 template <simply::affordance Affordance,
           simply::storage_affordance Storage = simply::allocator_storage<>,
           simply::dispatch_affordance Dispatch = simply::indirect_dispatch>

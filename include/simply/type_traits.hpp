@@ -27,6 +27,10 @@ struct dispatch_affordance_base : simply::affordance_base {};
 template <typename Affordance, typename T>
 struct affordance_traits;
 
+template <typename Affordance, typename T,
+          typename Fn = affordance_traits<Affordance, T>::function_type>
+struct impl;
+
 template <typename Affordance, typename Tag>
 struct fundamental_affordance_type {};
 
@@ -76,10 +80,9 @@ template <typename T>
 inline constexpr bool enable_affordance =
     std::derived_from<T, simply::affordance_base>;
 
-// TODO integrate this customization point with impl and/or affordance_traits
 template <typename Affordance, typename T>
 inline constexpr bool enable_affordance_for =
-    requires { &Affordance::template fn<T>; };
+    requires { simply::impl<Affordance, T>::fn; };
 
 template <typename T, typename Tag>
 inline constexpr bool enable_affordance_tag = std::derived_from<T, Tag>;

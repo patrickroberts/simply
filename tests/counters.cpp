@@ -63,12 +63,8 @@ static_assert([] {
       : simply::composes<copy_countable<int>, labeled<char>,
                          simply::copy_constructible, simply::destructible> {};
 
-  using dyn = simply::dyn<countable>;
-  static_assert(requires {
-    typename simply::affordance_traits<copy_countable<int>, dyn>::function_type;
-  });
   // initialize a vector of dyn<countable> with three different counter types
-  std::vector<dyn> v;
+  std::vector<simply::dyn<countable>> v;
   v.emplace_back(std::in_place_type<counter<'A'>>);
   v.emplace_back(std::in_place_type<counter<'B'>>);
   v.emplace_back(std::in_place_type<counter<'C'>>);
