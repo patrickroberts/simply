@@ -63,8 +63,8 @@ int main() {
   - `composes<Affordances...>`
   - `chooses<Affordances...>`
   - `destructible`
-  - `move_constructible`
-  - `copy_constructible`
+  - `movable`
+  - `copyable`
   - `extractable<In>`
   - `insertable<Out>`
   - `allocator_storage<Allocator>`

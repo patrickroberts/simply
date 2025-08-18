@@ -22,11 +22,10 @@ class dyn
     : public simply::iface<Affordance,
                            simply::dyn<Affordance, Storage, Dispatch>>,
       public simply::iface<Storage, simply::dyn<Affordance, Storage, Dispatch>>,
-      public simply::iface<typename Dispatch::template type<Affordance>,
+      public simply::iface<Dispatch,
                            simply::dyn<Affordance, Storage, Dispatch>> {
   using storage_base = simply::iface<Storage, dyn>;
-  using dispatch_base =
-      simply::iface<typename Dispatch::template type<Affordance>, dyn>;
+  using dispatch_base = simply::iface<Dispatch, dyn>;
 
 public:
   using affordance_type = Affordance;
@@ -101,6 +100,11 @@ using dyn = simply::dyn<Affordance, simply::pmr::polymorphic_allocator_storage,
                         Dispatch>;
 
 } // namespace pmr
+
+template <typename Affordance, typename Storage, typename Dispatch>
+struct affordance_type<simply::dyn<Affordance, Storage, Dispatch>> {
+  using type = Affordance;
+};
 
 template <simply::member_affordance Affordance,
           simply::specialization_of<simply::dyn> Dyn, typename R, typename Self,

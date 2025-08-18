@@ -39,7 +39,7 @@ public:
   template <typename U>
   void operator,(U &&) = delete;
 
-  constexpr ~elide() = default;
+  ~elide() = default;
 };
 
 template <typename F>

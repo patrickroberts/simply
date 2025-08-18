@@ -1,11 +1,11 @@
 #ifndef SIMPLY_COPYABLE_HPP
 #define SIMPLY_COPYABLE_HPP
 
-#include <simply/movable.hpp>
+#include <simply/type_traits.hpp>
 
 namespace simply {
 
-struct copy_constructible : simply::copy_affordance_base {
+struct copyable : simply::copy_affordance_base {
   template <typename T>
     requires std::is_copy_constructible_v<T>
   static constexpr auto fn(const std::type_identity_t<T> &self) noexcept(
@@ -13,9 +13,6 @@ struct copy_constructible : simply::copy_affordance_base {
     return self;
   }
 };
-
-struct copyable
-    : simply::composes<simply::copy_constructible, simply::movable> {};
 
 } // namespace simply
 

@@ -21,6 +21,7 @@ struct allocator_storage : simply::storage_affordance_base {
   using void_pointer = traits::void_pointer;
   using const_void_pointer = traits::const_void_pointer;
 
+  // TODO express this by dispatching directly from iface to reduce boilerplate
   template <typename T>
   struct fn_t {
     using rebound = traits::template rebind_traits<T>;
@@ -103,10 +104,10 @@ public:
       : alloc(), object_ptr(_construct_with(simply::_rebind_alloc<T>(alloc),
                                             std::forward<Args>(args)...)) {}
 
-  constexpr auto operator=(const iface &other) -> iface & = delete;
-  constexpr auto operator=(iface &&other) noexcept -> iface & = delete;
+  auto operator=(const iface &other) -> iface & = default;
+  auto operator=(iface &&other) noexcept -> iface & = default;
 
-  constexpr ~iface() noexcept = default;
+  ~iface() = default;
 
   [[nodiscard]] constexpr auto get_allocator() const noexcept
       -> allocator_type {

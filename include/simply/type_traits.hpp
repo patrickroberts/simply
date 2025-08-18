@@ -27,6 +27,12 @@ struct dispatch_affordance_base : simply::affordance_base {};
 template <typename Affordance, typename T>
 struct affordance_traits;
 
+template <typename T>
+struct affordance_type;
+
+template <typename T>
+using affordance_type_t = affordance_type<T>::type;
+
 template <typename Affordance, typename T,
           typename Fn = affordance_traits<Affordance, T>::function_type>
 struct impl;
