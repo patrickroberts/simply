@@ -3,7 +3,6 @@
 
 #include <simply/concepts.hpp>
 #include <simply/dispatch.hpp>
-#include <simply/elide.hpp>
 #include <simply/iface.hpp>
 #include <simply/impl.hpp>
 #include <simply/storage.hpp>
@@ -106,6 +105,7 @@ struct affordance_type<simply::dyn<Affordance, Storage, Dispatch>> {
   using type = Affordance;
 };
 
+// dynamic dispatch for member affordances of dyn
 template <simply::member_affordance Affordance,
           simply::specialization_of<simply::dyn> Dyn, typename R, typename Self,
           typename... Args, bool NoExcept>
@@ -116,17 +116,19 @@ struct impl<Affordance, Dyn, R(Self, Args...) noexcept(NoExcept)> {
   }
 };
 
-// TODO refactor impl specializations below to not assume allocator_storage
+// TODO refactor specializations below to not assume allocator_storage
 template <typename Dyn>
 concept _allocator_storage_dyn =
     simply::specialization_of<Dyn, simply::dyn> and
     simply::specialization_of<typename Dyn::storage_type,
                               simply::allocator_storage>;
 
-// TODO resolve storage type from choices by checking each compatibility with T
-template <typename T, typename Dyn>
-inline constexpr const auto &_storage_fn =
-    simply::fn<typename Dyn::storage_type, T>;
+// only copy the storage subobject of Dyn
+template <simply::_allocator_storage_dyn Dyn>
+struct affordance_traits<simply::copyable, Dyn> {
+  using function_type =
+      simply::iface<typename Dyn::storage_type, Dyn>(const Dyn &);
+};
 
 template <simply::member_affordance Affordance, typename T,
           simply::_allocator_storage_dyn Dyn, typename R, typename Self,
@@ -136,40 +138,20 @@ struct impl<simply::impl<Affordance, T>, Dyn,
   static constexpr auto fn(Self dyn, Args... args) noexcept(NoExcept) -> R {
     using self_type = simply::apply_cvref_t<Self, T>;
 
-    const auto pointer = simply::_storage_fn<T, Dyn>(dyn.get());
+    const auto pointer = simply::_dispatch_fn<T, Dyn>(dyn);
     return simply::fn<Affordance, T>(std::forward<self_type>(*pointer),
                                      std::forward<Args>(args)...);
   }
 };
 
-template <simply::constructor_affordance Affordance, typename T,
-          simply::_allocator_storage_dyn Dyn, typename R, typename Self,
-          typename... Args, bool NoExcept>
-struct impl<simply::impl<Affordance, T>, Dyn,
-            R(Self, Args...) noexcept(NoExcept)> {
-  static_assert(std::same_as<R, Dyn>);
-
-  static constexpr auto fn(Self dyn, Args... args) -> Dyn {
-    using self_type = simply::apply_cvref_t<Self, T>;
-    return Dyn{
-        std::allocator_arg,
-        dyn.get_allocator(),
-        std::in_place_type<T>,
-        simply::elide([&] -> T {
-          const auto pointer = simply::_storage_fn<T, Dyn>(dyn.get());
-          return simply::fn<Affordance, T>(std::forward<self_type>(*pointer),
-                                           std::forward<Args>(args)...);
-        }),
-    };
-  }
-};
-
+// TODO should this be specialized for simply::destructible only?
 template <simply::fundamental_destroy_affordance Affordance, typename T,
           simply::_allocator_storage_dyn Dyn, typename R, typename Self,
           typename... Args, bool NoExcept>
 struct impl<simply::impl<Affordance, T>, Dyn,
             R(Self, Args...) noexcept(NoExcept)> {
-  static_assert(std::same_as<R(Self, Args...), void(Dyn &)> and NoExcept);
+  static_assert(
+      std::same_as<R(Self, Args...) noexcept(NoExcept), void(Dyn &) noexcept>);
 
   static constexpr void fn(Dyn &dyn) noexcept {
     if (dyn.valueless_after_move()) {
@@ -177,7 +159,7 @@ struct impl<simply::impl<Affordance, T>, Dyn,
     }
 
     auto alloc = simply::_rebind_alloc<T>(dyn.get_allocator());
-    const auto pointer = simply::_storage_fn<T, Dyn>(dyn.get());
+    const auto pointer = simply::_dispatch_fn<T, Dyn>(dyn);
 
     using traits = std::allocator_traits<decltype(alloc)>;
 
