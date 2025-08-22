@@ -12,7 +12,7 @@ concept insertable_into = requires(const T &value, Out &output) {
 };
 
 template <typename Out>
-struct insertable : simply::member_affordance_base {
+struct insertable : simply::member_base {
   static constexpr auto fn(const simply::insertable_into<Out> auto &value,
                            Out &out) -> Out & {
     return out << value;

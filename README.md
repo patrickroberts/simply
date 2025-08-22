@@ -1,6 +1,6 @@
 # Simply
 
-## A playground for external polymorphism in C++.
+## A playground for external polymorphism in C++
 
 - No macros
 - Concise syntax for defining and using affordances
@@ -15,7 +15,7 @@
 #include <numbers>
 #include <vector>
 
-struct insertable : simply::member_affordance_base {
+struct insertable : simply::member_base {
   static auto fn(const auto &value, std::ostream &out) -> std::ostream & {
     return out << value;
   }
@@ -54,10 +54,10 @@ int main() {
 - `dyn<Affordance, Storage, Dispatch>` for type erasure of affordances
 - Concepts:
   - `affordance<Affordance>`
-  - `fundamental_affordance<Affordance>`
-  - `compound_affordance<Affordance>`
-  - `composition_affordance<Affordance>`
-  - `choice_affordance<Affordance>`
+  - `fundamental<Affordance>`
+  - `compound<Affordance>`
+  - `composition<Affordance>`
+  - `choice<Affordance>`
   - `affords<T, Affordance>`
 - Predefined affordances for common use-cases:
   - `composes<Affordances...>`
@@ -79,7 +79,7 @@ int main() {
 - `shared_storage`
 - `copy_on_write_storage`
 - `invocable` affordance template
-- `assignment_affordance` support for type erasing sinks
+- `assignment` support for type erasing sinks
 - `slot_dispatch` for vtable lookup using a static slot map key
 - Affordances for iterators
 - Specializations of `impl` to delegate member affordances through:

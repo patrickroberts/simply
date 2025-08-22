@@ -15,8 +15,8 @@ namespace simply {
 // categorize affordances, or provide a type alias template to categorize them
 // and inject defaults. Rename to `basic_dyn`?
 template <simply::affordance Affordance,
-          simply::storage_affordance Storage = simply::allocator_storage<>,
-          simply::dispatch_affordance Dispatch = simply::indirect_dispatch>
+          simply::storage Storage = simply::allocator_storage<>,
+          simply::dispatch Dispatch = simply::indirect_dispatch>
 class dyn
     : public simply::iface<Affordance,
                            simply::dyn<Affordance, Storage, Dispatch>>,
@@ -94,7 +94,7 @@ using polymorphic_allocator_storage =
     simply::allocator_storage<std::pmr::polymorphic_allocator<std::byte>>;
 
 template <simply::affordance Affordance,
-          simply::dispatch_affordance Dispatch = simply::indirect_dispatch>
+          simply::dispatch Dispatch = simply::indirect_dispatch>
 using dyn = simply::dyn<Affordance, simply::pmr::polymorphic_allocator_storage,
                         Dispatch>;
 
@@ -106,9 +106,8 @@ struct affordance_type<simply::dyn<Affordance, Storage, Dispatch>> {
 };
 
 // dynamic dispatch for member affordances of dyn
-template <simply::member_affordance Affordance,
-          simply::specialization_of<simply::dyn> Dyn, typename R, typename Self,
-          typename... Args, bool NoExcept>
+template <simply::member Affordance, simply::specialization_of<simply::dyn> Dyn,
+          typename R, typename Self, typename... Args, bool NoExcept>
 struct impl<Affordance, Dyn, R(Self, Args...) noexcept(NoExcept)> {
   static constexpr auto fn(Self dyn, Args... args) noexcept(NoExcept) -> R {
     const auto fn = dyn.get_member(std::in_place_type<Affordance>);
@@ -130,7 +129,7 @@ struct affordance_traits<simply::copyable, Dyn> {
       simply::iface<typename Dyn::storage_type, Dyn>(const Dyn &);
 };
 
-template <simply::member_affordance Affordance, typename T,
+template <simply::member Affordance, typename T,
           simply::_allocator_storage_dyn Dyn, typename R, typename Self,
           typename... Args, bool NoExcept>
 struct impl<simply::impl<Affordance, T>, Dyn,

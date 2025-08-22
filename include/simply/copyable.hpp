@@ -5,7 +5,7 @@
 
 namespace simply {
 
-struct copyable : simply::copy_affordance_base {
+struct copyable : simply::copy_base {
   template <typename T>
     requires std::is_copy_constructible_v<T>
   static constexpr auto fn(const std::type_identity_t<T> &self) noexcept(

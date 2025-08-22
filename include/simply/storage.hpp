@@ -35,13 +35,13 @@ template <typename Rebound, typename... Args>
 }
 
 template <typename Allocator = std::allocator<std::byte>>
-struct allocator_storage : simply::storage_affordance_base {
+struct allocator_storage : simply::storage_base {
   using traits = std::allocator_traits<Allocator>;
   using void_pointer = traits::void_pointer;
   using const_void_pointer = traits::const_void_pointer;
 
   template <typename T>
-  struct dispatch : simply::member_affordance_base {
+  struct dispatch : simply::member_base {
     using rebound = traits::template rebind_traits<T>;
     using pointer = rebound::pointer;
     using const_pointer = rebound::const_pointer;

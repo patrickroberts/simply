@@ -34,7 +34,7 @@ template <typename Affordance>
 inline constexpr simply::_deduce_t<Affordance>
     fn<Affordance, simply::_deduce_tag_t>{};
 
-template <simply::member_affordance Affordance, typename T>
+template <simply::member Affordance, typename T>
 struct affordance_traits<Affordance, T> {
   using function_type = decltype(Affordance::template fn<T>);
 };

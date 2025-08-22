@@ -7,7 +7,7 @@
 
 namespace simply {
 
-struct movable : simply::move_affordance_base {
+struct movable : simply::move_base {
   template <std::move_constructible T>
   static constexpr auto fn(std::type_identity_t<T> &&self) noexcept(
       std::is_nothrow_move_constructible_v<T>) -> T {

@@ -8,9 +8,9 @@
 
 namespace simply {
 
-struct indirect_dispatch : simply::dispatch_affordance_base {};
+struct indirect_dispatch : simply::dispatch_base {};
 
-struct inplace_dispatch : simply::dispatch_affordance_base {};
+struct inplace_dispatch : simply::dispatch_base {};
 
 template <typename Self>
 struct iface<simply::indirect_dispatch, Self> {
@@ -23,7 +23,7 @@ private:
   template <typename Affordance, typename Dyn, typename Fn>
   friend struct simply::impl;
 
-  template <simply::member_affordance Member>
+  template <simply::member Member>
   [[nodiscard]] constexpr auto
   get_member([[maybe_unused]] std::in_place_type_t<Member> tag) const noexcept {
     using base_type = simply::vtable<Member, Self>;
@@ -48,7 +48,7 @@ private:
   template <typename Affordance, typename Dyn, typename Fn>
   friend struct simply::impl;
 
-  template <simply::member_affordance Member>
+  template <simply::member Member>
   [[nodiscard]] constexpr auto
   get_member([[maybe_unused]] std::in_place_type_t<Member> tag) const noexcept {
     using base_type = simply::vtable<Member, Self>;

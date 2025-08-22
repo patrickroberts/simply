@@ -27,7 +27,7 @@ private:
 
 // example of an affordance for a class that counts how many times it is copied
 template <typename CountT>
-struct copy_countable : simply::member_affordance_base {
+struct copy_countable : simply::member_base {
   template <typename T>
   static constexpr auto fn(const T &counter) -> CountT {
     return counter.copy_count();
@@ -36,7 +36,7 @@ struct copy_countable : simply::member_affordance_base {
 
 // example of an affordance for a class that is labeled
 template <typename LabelT>
-struct labeled : simply::member_affordance_base {
+struct labeled : simply::member_base {
   template <typename T>
   static constexpr auto fn(const T &counter) -> LabelT {
     return counter.label();

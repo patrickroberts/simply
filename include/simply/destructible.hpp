@@ -7,7 +7,7 @@
 
 namespace simply {
 
-struct destructible : simply::destroy_affordance_base {
+struct destructible : simply::destroy_base {
   template <std::destructible T>
   static constexpr void fn(std::type_identity_t<T> &self) noexcept {
     if constexpr (not std::is_trivially_destructible_v<T>) {

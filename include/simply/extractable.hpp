@@ -12,7 +12,7 @@ concept extractable_from = requires(const T &value, In &input) {
 };
 
 template <typename In>
-struct extractable : simply::member_affordance_base {
+struct extractable : simply::member_base {
   static constexpr auto fn(const simply::extractable_from<In> auto &value,
                            In &out) -> In & {
     return out >> value;

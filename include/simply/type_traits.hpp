@@ -8,21 +8,21 @@ namespace simply {
 
 struct affordance_base {};
 
-struct compound_affordance_base : simply::affordance_base {};
+struct compound_base : simply::affordance_base {};
 
-struct member_affordance_base : simply::affordance_base {};
+struct member_base : simply::affordance_base {};
 
-struct constructor_affordance_base : simply::member_affordance_base {};
+struct constructor_base : simply::member_base {};
 
-struct copy_affordance_base : simply::constructor_affordance_base {};
+struct copy_base : simply::constructor_base {};
 
-struct move_affordance_base : simply::constructor_affordance_base {};
+struct move_base : simply::constructor_base {};
 
-struct destroy_affordance_base : simply::member_affordance_base {};
+struct destroy_base : simply::member_base {};
 
-struct storage_affordance_base : simply::member_affordance_base {};
+struct storage_base : simply::member_base {};
 
-struct dispatch_affordance_base : simply::affordance_base {};
+struct dispatch_base : simply::affordance_base {};
 
 template <typename Affordance, typename T>
 struct affordance_traits;
@@ -41,32 +41,28 @@ template <typename Affordance, typename T,
 struct impl;
 
 template <typename Affordance, typename Tag>
-struct fundamental_affordance_type {};
+struct fundamental_type {};
 
 template <typename Affordance, typename Tag>
-using fundamental_affordance_type_t =
-    simply::fundamental_affordance_type<Affordance, Tag>::type;
+using fundamental_type_t = simply::fundamental_type<Affordance, Tag>::type;
 
 template <typename Affordance>
 using copy_affordance_t =
-    simply::fundamental_affordance_type_t<Affordance,
-                                          simply::copy_affordance_base>;
+    simply::fundamental_type_t<Affordance, simply::copy_base>;
 
 template <typename Affordance>
 using move_affordance_t =
-    simply::fundamental_affordance_type_t<Affordance,
-                                          simply::move_affordance_base>;
+    simply::fundamental_type_t<Affordance, simply::move_base>;
 
 template <typename Affordance>
 using destroy_affordance_t =
-    simply::fundamental_affordance_type_t<Affordance,
-                                          simply::destroy_affordance_base>;
+    simply::fundamental_type_t<Affordance, simply::destroy_base>;
 
 template <typename... Ts>
-struct composes : simply::compound_affordance_base {};
+struct composes : simply::compound_base {};
 
 template <typename... Ts>
-struct chooses : simply::compound_affordance_base {};
+struct chooses : simply::compound_base {};
 
 template <typename, template <typename...> typename>
 inline constexpr bool is_specialization_of_v = false;
@@ -97,11 +93,10 @@ template <typename T, typename Tag>
 inline constexpr bool enable_affordance_tag = std::derived_from<T, Tag>;
 
 template <typename Affordance, typename Unique = simply::composes<>>
-struct unique_fundamental_affordances;
+struct unique_fundamental;
 
 template <typename Affordance>
-using unique_fundamental_affordances_t =
-    simply::unique_fundamental_affordances<Affordance>::type;
+using unique_fundamental_t = simply::unique_fundamental<Affordance>::type;
 
 template <typename From, typename To>
 struct apply_cvref : std::remove_cvref<To> {};
