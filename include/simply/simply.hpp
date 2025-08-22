@@ -10,6 +10,7 @@
 #include <simply/dyn.hpp>
 #include <simply/elide.hpp>
 #include <simply/extractable.hpp>
+#include <simply/identifiable.hpp>
 #include <simply/iface.hpp>
 #include <simply/impl.hpp>
 #include <simply/insertable.hpp>

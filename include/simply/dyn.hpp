@@ -31,6 +31,9 @@ public:
   using storage_type = Storage;
   using dispatch_type = Dispatch;
 
+  // TODO add default constructor for nullable affordance
+
+  // TODO generalize member constraints based on storage
   constexpr dyn(const dyn &other)
     requires simply::copy_affordance<Affordance>
   = default;

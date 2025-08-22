@@ -114,8 +114,8 @@ template <typename R, typename... Args, bool NoExcept, typename Self>
 struct iface<simply::invocable<R(Args...) & noexcept(NoExcept)>, Self> {
   constexpr auto operator()(this Self &self, Args... args) noexcept(NoExcept)
       -> R {
-    return simply::fn<simply::invocable<R(Args...) & noexcept(NoExcept)>, Self>(
-        self, std::forward<Args>(args)...);
+    using invoke = simply::invocable<R(Args...) & noexcept(NoExcept)>;
+    return simply::fn<invoke, Self>(self, std::forward<Args>(args)...);
   }
 };
 
@@ -123,8 +123,9 @@ template <typename R, typename... Args, bool NoExcept, typename Self>
 struct iface<simply::invocable<R(Args...) && noexcept(NoExcept)>, Self> {
   constexpr auto operator()(this Self &&self, Args... args) noexcept(NoExcept)
       -> R {
-    return simply::fn<simply::invocable<R(Args...) && noexcept(NoExcept)>,
-                      Self>(std::move(self), std::forward<Args>(args)...);
+    using invoke = simply::invocable<R(Args...) && noexcept(NoExcept)>;
+    return simply::fn<invoke, Self>(std::move(self),
+                                    std::forward<Args>(args)...);
   }
 };
 
@@ -132,8 +133,8 @@ template <typename R, typename... Args, bool NoExcept, typename Self>
 struct iface<simply::invocable<R(Args...) const & noexcept(NoExcept)>, Self> {
   constexpr auto operator()(this const Self &self,
                             Args... args) noexcept(NoExcept) -> R {
-    return simply::fn<simply::invocable<R(Args...) const & noexcept(NoExcept)>,
-                      Self>(self, std::forward<Args>(args)...);
+    using invoke = simply::invocable<R(Args...) const & noexcept(NoExcept)>;
+    return simply::fn<invoke, Self>(self, std::forward<Args>(args)...);
   }
 };
 
@@ -141,8 +142,9 @@ template <typename R, typename... Args, bool NoExcept, typename Self>
 struct iface<simply::invocable<R(Args...) const && noexcept(NoExcept)>, Self> {
   constexpr auto operator()(this const Self &&self,
                             Args... args) noexcept(NoExcept) -> R {
-    return simply::fn<simply::invocable<R(Args...) const && noexcept(NoExcept)>,
-                      Self>(std::move(self), std::forward<Args>(args)...);
+    using invoke = simply::invocable<R(Args...) const && noexcept(NoExcept)>;
+    return simply::fn<invoke, Self>(std::move(self),
+                                    std::forward<Args>(args)...);
   }
 };
 

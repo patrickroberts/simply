@@ -68,6 +68,7 @@ int main() {
   - `invocable<Fn>`
   - `extractable<In>`
   - `insertable<Out>`
+  - `identifiable`
   - `allocator_storage<Allocator>`
   - `indirect_dispatch`
   - `inplace_dispatch`
@@ -79,7 +80,14 @@ int main() {
 - `inplace_storage<Size, Align>`
 - `shared_storage`
 - `copy_on_write_storage`
-- `assignment` support for type erasing sinks
+- `nullable`
+- `retrievable`
+- `trivially_copyable`
+- `trivially_destructible`
+- `equality_comparable<Policy>`
+- `three_way_comparable<Ordering, Policy>`
+  - Policy determines behavior when erased types mismatch
+- `assignable_from<T>` support for type erasing sinks
 - `slot_dispatch` for vtable lookup using a static slot map key
 - Affordances for iterators
 - Specializations of `impl` to delegate member affordances through:
