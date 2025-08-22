@@ -65,6 +65,7 @@ int main() {
   - `destructible`
   - `movable`
   - `copyable`
+  - `invocable<Fn>`
   - `extractable<In>`
   - `insertable<Out>`
   - `allocator_storage<Allocator>`
@@ -78,7 +79,6 @@ int main() {
 - `inplace_storage<Size, Align>`
 - `shared_storage`
 - `copy_on_write_storage`
-- `invocable` affordance template
 - `assignment` support for type erasing sinks
 - `slot_dispatch` for vtable lookup using a static slot map key
 - Affordances for iterators

@@ -13,6 +13,7 @@
 #include <simply/iface.hpp>
 #include <simply/impl.hpp>
 #include <simply/insertable.hpp>
+#include <simply/invocable.hpp>
 #include <simply/movable.hpp>
 #include <simply/scope.hpp>
 #include <simply/storage.hpp>
