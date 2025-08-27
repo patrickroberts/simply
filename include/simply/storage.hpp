@@ -67,7 +67,7 @@ template <typename T, typename Dyn>
 inline constexpr const auto &_dispatch_fn =
     simply::fn<typename Dyn::storage_type::template dispatch<T>>;
 
-template <simply::fundamental_copy_affordance Copy, typename T,
+template <simply::fundamental_copy_mixin Copy, typename T,
           simply::specialization_of<simply::allocator_storage> Storage,
           typename Dyn, typename R, typename Self, typename... Args,
           bool NoExcept>
@@ -77,7 +77,7 @@ struct impl<simply::impl<Copy, T>, simply::iface<Storage, Dyn>,
   static_assert(std::same_as<R(Self, Args...) noexcept(NoExcept),
                              iface_type(const iface_type &)>);
 
-  // static dispatch for copy affordance of dyn with allocator storage
+  // static dispatch for copy mixin of dyn with allocator storage
   static constexpr auto fn(Self self) -> R {
     using type = typename simply::iface<Storage, Dyn>::allocator_type;
     using traits = std::allocator_traits<type>;
@@ -106,7 +106,7 @@ private:
 
 template <simply::specialization_of<simply::allocator_storage> Storage,
           typename Self>
-  requires simply::affordance<Storage>
+  requires simply::mixin<Storage>
 struct iface<Storage, Self> {
 private:
   using traits = Storage::traits;
@@ -121,15 +121,14 @@ public:
   using const_void_pointer = traits::const_void_pointer;
 
   // effectively private "valueless" constructor
-  template <typename Alloc, simply::fundamental_copy_affordance Copy,
-            typename T>
+  template <typename Alloc, simply::fundamental_copy_mixin Copy, typename T>
   constexpr iface(std::allocator_arg_t alloc_tag, const Alloc &alloc,
                   simply::impl<simply::impl<Copy, T>, iface> tag) noexcept
     requires std::default_initializable<void_pointer>
       : alloc(alloc), object_ptr() {}
 
   constexpr iface(const iface &other) {
-    using copy = simply::copy_affordance_t<typename Self::affordance_type>;
+    using copy = simply::copy_mixin_t<typename Self::mixin_type>;
 
     std::construct_at(this, simply::elide([&] {
                         // TODO template storage on dispatch to access

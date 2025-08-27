@@ -16,11 +16,10 @@ template <typename Self>
 struct iface<simply::indirect_dispatch, Self> {
   template <typename T>
   constexpr iface([[maybe_unused]] std::in_place_type_t<T> tag)
-      : vtable_ptr(
-            std::addressof(simply::vtable_for<affordance_type, Self, T>)) {}
+      : vtable_ptr(std::addressof(simply::vtable_for<mixin_type, Self, T>)) {}
 
 private:
-  template <typename Affordance, typename Dyn, typename Fn>
+  template <typename Mixin, typename Dyn, typename Fn>
   friend struct simply::impl;
 
   template <simply::member Member>
@@ -32,8 +31,8 @@ private:
     return static_cast<const base_type &>(*vtable_ptr).fn;
   }
 
-  using affordance_type = simply::affordance_type_t<Self>;
-  using vtable_type = simply::vtable<affordance_type, Self>;
+  using mixin_type = simply::mixin_type_t<Self>;
+  using vtable_type = simply::vtable<mixin_type, Self>;
 
   const vtable_type *vtable_ptr;
 };
@@ -42,10 +41,10 @@ template <typename Self>
 struct iface<simply::inplace_dispatch, Self> {
   template <typename T>
   constexpr iface([[maybe_unused]] std::in_place_type_t<T> tag)
-      : vtable(simply::vtable_for<affordance_type, Self, T>) {}
+      : vtable(simply::vtable_for<mixin_type, Self, T>) {}
 
 private:
-  template <typename Affordance, typename Dyn, typename Fn>
+  template <typename Mixin, typename Dyn, typename Fn>
   friend struct simply::impl;
 
   template <simply::member Member>
@@ -57,8 +56,8 @@ private:
     return static_cast<const base_type &>(vtable).fn;
   }
 
-  using affordance_type = simply::affordance_type_t<Self>;
-  using vtable_type = simply::vtable<affordance_type, Self>;
+  using mixin_type = simply::mixin_type_t<Self>;
+  using vtable_type = simply::vtable<mixin_type, Self>;
 
   vtable_type vtable;
 };

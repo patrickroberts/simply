@@ -3,7 +3,7 @@
 ## A playground for external polymorphism in C++
 
 - No macros
-- Concise syntax for defining and using affordances
+- Concise syntax for defining and using mixins
 - Supports allocators
 - `constexpr` in C++26
 
@@ -31,9 +31,9 @@ struct simply::iface<insertable, Self> {
 int main() {
   using namespace std::string_literals;
 
-  struct affordances : simply::composes<insertable, simply::destructible> {};
+  struct mixins : simply::composes<insertable, simply::destructible> {};
 
-  std::vector<simply::dyn<affordances>> values;
+  std::vector<simply::dyn<mixins>> values;
   values.emplace_back("Hello, world!"s);
   values.emplace_back(4);
   values.emplace_back(std::numbers::pi);
@@ -51,17 +51,17 @@ int main() {
 
 ### Features
 
-- `dyn<Affordance, Storage, Dispatch>` for type erasure of affordances
+- `dyn<Mixin, Storage, Dispatch>` for type erasure of mixins
 - Concepts:
-  - `affordance<Affordance>`
-  - `fundamental<Affordance>`
-  - `compound<Affordance>`
-  - `composition<Affordance>`
-  - `choice<Affordance>`
-  - `affords<T, Affordance>`
-- Predefined affordances for common use-cases:
-  - `composes<Affordances...>`
-  - `chooses<Affordances...>`
+  - `mixin<Mixin>`
+  - `fundamental<Mixin>`
+  - `compound<Mixin>`
+  - `composition<Mixin>`
+  - `choice<Mixin>`
+  - `affords<T, Mixin>`
+- Predefined mixins for common use-cases:
+  - `composes<Mixins...>`
+  - `chooses<Mixins...>`
   - `destructible`
   - `movable`
   - `copyable`
@@ -72,8 +72,8 @@ int main() {
   - `allocator_storage<Allocator>`
   - `indirect_dispatch`
   - `inplace_dispatch`
-- `iface<Affordance, Self>` to specialize interfaces of `dyn`
-- `impl<Affordance, T>` to specialize implementations of an affordance
+- `iface<Mixin, Self>` to specialize interfaces of `dyn`
+- `impl<Mixin, T>` to specialize implementations of a mixin
 
 ### Planned Features
 
@@ -89,8 +89,8 @@ int main() {
   - Policy determines behavior when erased types mismatch
 - `assignable_from<T>` support for type erasing sinks
 - `slot_dispatch` for vtable lookup using a static slot map key
-- Affordances for iterators
-- Specializations of `impl` to delegate member affordances through:
+- Mixins for iterators
+- Specializations of `impl` to delegate member mixins through:
   - `std::reference_wrapper`
   - `std::unique_ptr`
   - `std::shared_ptr`

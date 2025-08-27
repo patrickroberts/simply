@@ -25,7 +25,7 @@ private:
   int copied = 0;
 };
 
-// example of an affordance for a class that counts how many times it is copied
+// example of a mixin for a class that counts how many times it is copied
 template <typename CountT>
 struct copy_countable : simply::member_base {
   template <typename T>
@@ -34,7 +34,7 @@ struct copy_countable : simply::member_base {
   }
 };
 
-// example of an affordance for a class that is labeled
+// example of a mixin for a class that is labeled
 template <typename LabelT>
 struct labeled : simply::member_base {
   template <typename T>
@@ -43,7 +43,7 @@ struct labeled : simply::member_base {
   }
 };
 
-// specialize iface for each affordance so dyn<Affordance> can use them
+// specialize iface for each mixin so dyn<Mixin> can use them
 template <typename CountT, typename Self>
 struct simply::iface<copy_countable<CountT>, Self> {
   constexpr auto copy_count(this const Self &self) -> CountT {

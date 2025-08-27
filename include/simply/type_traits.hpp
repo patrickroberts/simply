@@ -6,11 +6,11 @@
 
 namespace simply {
 
-struct affordance_base {};
+struct mixin_base {};
 
-struct compound_base : simply::affordance_base {};
+struct compound_base : simply::mixin_base {};
 
-struct member_base : simply::affordance_base {};
+struct member_base : simply::mixin_base {};
 
 struct constructor_base : simply::member_base {};
 
@@ -22,41 +22,38 @@ struct destroy_base : simply::member_base {};
 
 struct storage_base : simply::member_base {};
 
-struct dispatch_base : simply::affordance_base {};
+struct dispatch_base : simply::mixin_base {};
 
-template <typename Affordance, typename T>
-struct affordance_traits;
+template <typename Mixin, typename T>
+struct mixin_traits;
 
-template <typename Affordance, typename T>
-using function_type_t = simply::affordance_traits<Affordance, T>::function_type;
-
-template <typename T>
-struct affordance_type;
+template <typename Mixin, typename T>
+using function_type_t = simply::mixin_traits<Mixin, T>::function_type;
 
 template <typename T>
-using affordance_type_t = simply::affordance_type<T>::type;
+struct mixin_type;
 
-template <typename Affordance, typename T,
-          typename Fn = simply::function_type_t<Affordance, T>>
+template <typename T>
+using mixin_type_t = simply::mixin_type<T>::type;
+
+template <typename Mixin, typename T,
+          typename Fn = simply::function_type_t<Mixin, T>>
 struct impl;
 
-template <typename Affordance, typename Tag>
+template <typename Mixin, typename Tag>
 struct fundamental_type {};
 
-template <typename Affordance, typename Tag>
-using fundamental_type_t = simply::fundamental_type<Affordance, Tag>::type;
+template <typename Mixin, typename Tag>
+using fundamental_type_t = simply::fundamental_type<Mixin, Tag>::type;
 
-template <typename Affordance>
-using copy_affordance_t =
-    simply::fundamental_type_t<Affordance, simply::copy_base>;
+template <typename Mixin>
+using copy_mixin_t = simply::fundamental_type_t<Mixin, simply::copy_base>;
 
-template <typename Affordance>
-using move_affordance_t =
-    simply::fundamental_type_t<Affordance, simply::move_base>;
+template <typename Mixin>
+using move_mixin_t = simply::fundamental_type_t<Mixin, simply::move_base>;
 
-template <typename Affordance>
-using destroy_affordance_t =
-    simply::fundamental_type_t<Affordance, simply::destroy_base>;
+template <typename Mixin>
+using destroy_mixin_t = simply::fundamental_type_t<Mixin, simply::destroy_base>;
 
 template <typename... Ts>
 struct composes : simply::compound_base {};
@@ -82,21 +79,20 @@ using base_composition_t =
     simply::base_specialization_of_t<T, simply::composes>;
 
 template <typename T>
-inline constexpr bool enable_affordance =
-    std::derived_from<T, simply::affordance_base>;
+inline constexpr bool enable_mixin = std::derived_from<T, simply::mixin_base>;
 
-template <typename Affordance, typename T>
-inline constexpr bool enable_affordance_for =
-    requires { simply::impl<Affordance, T>::fn; };
+template <typename Mixin, typename T>
+inline constexpr bool enable_mixin_for =
+    requires { simply::impl<Mixin, T>::fn; };
 
 template <typename T, typename Tag>
-inline constexpr bool enable_affordance_tag = std::derived_from<T, Tag>;
+inline constexpr bool enable_mixin_tag = std::derived_from<T, Tag>;
 
-template <typename Affordance, typename Unique = simply::composes<>>
+template <typename Mixin, typename Unique = simply::composes<>>
 struct unique_fundamental;
 
-template <typename Affordance>
-using unique_fundamental_t = simply::unique_fundamental<Affordance>::type;
+template <typename Mixin>
+using unique_fundamental_t = simply::unique_fundamental<Mixin>::type;
 
 template <typename From, typename To>
 struct apply_cvref : std::remove_cvref<To> {};

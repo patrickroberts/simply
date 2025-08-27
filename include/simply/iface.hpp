@@ -5,16 +5,16 @@
 
 namespace simply {
 
-template <simply::affordance Affordance, typename Self>
+template <simply::mixin Mixin, typename Self>
 struct iface {};
 
-template <simply::composition Affordance, typename Self>
-struct iface<Affordance, Self>
-    : simply::iface<simply::unique_fundamental_t<Affordance>, Self> {};
+template <simply::composition Mixin, typename Self>
+struct iface<Mixin, Self>
+    : simply::iface<simply::unique_fundamental_t<Mixin>, Self> {};
 
-template <simply::fundamental... Affordances, typename Self>
-struct iface<simply::composes<Affordances...>, Self>
-    : simply::iface<Affordances, Self>... {};
+template <simply::fundamental... Mixins, typename Self>
+struct iface<simply::composes<Mixins...>, Self>
+    : simply::iface<Mixins, Self>... {};
 
 } // namespace simply
 
