@@ -58,7 +58,8 @@ int main() {
   - `compound<Mixin>`
   - `composition<Mixin>`
   - `choice<Mixin>`
-  - `affords<T, Mixin>`
+  - `mixin_for<Mixin, T>`
+  - `has_mixin<T, Mixin>`
 - Predefined mixins for common use-cases:
   - `composes<Mixins...>`
   - `chooses<Mixins...>`
@@ -97,11 +98,11 @@ int main() {
   - `std::weak_ptr`
   - `std::indirect`
   - `std::polymorphic`
-  - `std::variant` (if every alternative affords the member)
-  - `std::optional` (if both `T` and `std::nullopt_t` afford the member)
-  - `std::expected` (if both `T` and `E` afford the member)
-  - `std::pair` (if either first or second exclusively affords the member)
-  - `std::tuple` (if one element exclusively affords the member)
+  - `std::variant` (if every alternative has the mixin)
+  - `std::optional` (if both `T` and `std::nullopt_t` have the mixin)
+  - `std::expected` (if both `T` and `E` have the mixin)
+  - `std::pair` (if either `first` or `second` exclusively has the mixin)
+  - `std::tuple` (if one element exclusively has the mixin)
 - Specializations of `dyn` that behave equivalently to:
   - `std::function`
   - `std::copyable_function`
