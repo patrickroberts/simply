@@ -8,6 +8,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
+add_library(concepts concepts.cpp)
+target_link_libraries(concepts simply)
+
 add_library(counters counters.cpp)
 target_link_libraries(counters simply)
 

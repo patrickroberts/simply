@@ -32,21 +32,25 @@ public:
   // TODO add default constructor for nullable mixin
 
   // TODO generalize member constraints based on storage
+  dyn(const dyn &other) = delete;
   constexpr dyn(const dyn &other)
     requires simply::copy_mixin<Mixin>
   = default;
 
-  constexpr dyn(dyn &&other) noexcept = default;
+  dyn(dyn &&other) = delete;
+  constexpr dyn(dyn &&other) noexcept
+    requires simply::move_mixin<Mixin>
+  = default;
 
   template <typename Alloc, simply::has_mixin<Mixin> T, typename... Args>
-    requires std::constructible_from<T, Args...>
+    requires simply::constructible_from<T, Args...>
   constexpr explicit dyn(std::allocator_arg_t alloc_tag, const Alloc &alloc,
                          std::in_place_type_t<T> obj_tag, Args &&...args)
       : storage_base(alloc_tag, alloc, obj_tag, std::forward<Args>(args)...),
         dispatch_base(obj_tag) {}
 
   template <simply::has_mixin<Mixin> T, typename... Args>
-    requires std::constructible_from<T, Args...>
+    requires simply::constructible_from<T, Args...>
   constexpr explicit dyn(std::in_place_type_t<T> tag, Args &&...args)
       : storage_base(tag, std::forward<Args>(args)...), dispatch_base(tag) {}
 
@@ -54,14 +58,16 @@ public:
     requires(not std::same_as<std::remove_cvref_t<T>, dyn>) and
                 (not simply::specialization_of<std::remove_cvref_t<T>,
                                                std::in_place_type_t>) and
-                simply::has_mixin<std::decay_t<T>, Mixin>
+                simply::has_mixin<std::decay_t<T>, Mixin> and
+                simply::constructible_from<std::decay_t<T>, T>
   constexpr explicit dyn(T &&value)
       : storage_base(std::in_place_type<std::decay_t<T>>,
                      std::forward<T>(value)),
         dispatch_base(std::in_place_type<std::decay_t<T>>) {}
 
+  auto operator=(const dyn &other) -> dyn & = delete;
   constexpr auto operator=(const dyn &other) -> dyn &
-    requires simply::copy_mixin<Mixin>
+    requires simply::destroy_mixin<Mixin> and simply::copy_mixin<Mixin>
   {
     // prevent self-assignment
     if (this == std::addressof(other)) {
@@ -73,7 +79,10 @@ public:
     return *this;
   }
 
-  constexpr auto operator=(dyn &&other) noexcept -> dyn & {
+  auto operator=(dyn &&other) -> dyn & = delete;
+  constexpr auto operator=(dyn &&other) noexcept -> dyn &
+    requires simply::destroy_mixin<Mixin> and simply::move_mixin<Mixin>
+  {
     std::destroy_at(this);
     std::construct_at(this, std::move(other));
     return *this;
@@ -81,6 +90,7 @@ public:
 
   // TODO expose overloads for assignment mixins
 
+  ~dyn() = delete;
   constexpr ~dyn()
     requires simply::destroy_mixin<Mixin>
   {

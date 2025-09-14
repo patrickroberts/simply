@@ -34,6 +34,7 @@ template <typename Mixin>
 inline constexpr simply::_deduce_t<Mixin> fn<Mixin, simply::_deduce_tag_t>{};
 
 template <simply::member Mixin, typename T>
+  requires requires { Mixin::template fn<T>; }
 struct mixin_traits<Mixin, T> {
   using function_type = decltype(Mixin::template fn<T>);
 };

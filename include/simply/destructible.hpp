@@ -8,8 +8,10 @@
 namespace simply {
 
 struct destructible : simply::destroy_base {
-  template <std::destructible T>
-  static constexpr void fn(std::type_identity_t<T> &self) noexcept {
+  template <typename T>
+    requires std::is_destructible_v<T>
+  static constexpr void fn(std::type_identity_t<T> &self) noexcept(
+      std::is_nothrow_destructible_v<T>) {
     if constexpr (not std::is_trivially_destructible_v<T>) {
       std::destroy_at(std::addressof(self));
     }

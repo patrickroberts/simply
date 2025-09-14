@@ -1,15 +1,14 @@
 #ifndef SIMPLY_COPYABLE_HPP
 #define SIMPLY_COPYABLE_HPP
 
-#include <simply/type_traits.hpp>
+#include <simply/concepts.hpp>
 
 namespace simply {
 
 struct copyable : simply::copy_base {
-  template <typename T>
-    requires std::is_copy_constructible_v<T>
+  template <simply::copy_constructible T>
   static constexpr auto fn(const std::type_identity_t<T> &self) noexcept(
-      std::is_nothrow_copy_constructible_v<T>) -> T {
+      simply::nothrow_copy_constructible<T>) -> T {
     return self;
   }
 };
