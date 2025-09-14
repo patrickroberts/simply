@@ -101,12 +101,13 @@ struct impl<simply::impl<Copy, T>, simply::iface<Storage, Dyn>,
   }
 
 private:
-  impl() noexcept = default;
+  impl() = default;
 };
 
 template <simply::specialization_of<simply::allocator_storage> Storage,
           typename Self>
   requires simply::mixin<Storage>
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 struct iface<Storage, Self> {
 private:
   using traits = Storage::traits;
@@ -127,6 +128,13 @@ public:
     requires std::default_initializable<void_pointer>
       : alloc(alloc), object_ptr() {}
 
+  // copy constructor overload resolution needs to consider the template below
+  iface(const iface &)
+    requires false;
+
+  // defer instantiation until Self::mixin_type is accessible
+  template <typename T = Self>
+    requires simply::copy_mixin<typename T::mixin_type>
   constexpr iface(const iface &other) {
     using copy = simply::copy_mixin_t<typename Self::mixin_type>;
 
@@ -138,6 +146,7 @@ public:
                       }));
   }
 
+  // allocator_storage can implement move construction without type erasure
   constexpr iface(iface &&other) noexcept
       : alloc(other.alloc), object_ptr(other._release()) {}
 
@@ -159,7 +168,7 @@ public:
                                            std::forward<Args>(args)...)) {}
 
   auto operator=(const iface &other) -> iface & = default;
-  auto operator=(iface &&other) noexcept -> iface & = default;
+  auto operator=(iface &&other) -> iface & = default;
 
   ~iface() = default;
 

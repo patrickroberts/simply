@@ -1,7 +1,6 @@
 #include <simply/destructible.hpp>
 #include <simply/dyn.hpp>
 #include <simply/insertable.hpp>
-#include <simply/movable.hpp>
 
 #include <gtest/gtest.h>
 
@@ -11,7 +10,7 @@ TEST(Stream, TypeErasedInsertion) {
   using namespace std::string_literals;
 
   struct mixins : simply::composes<simply::insertable<std::ostream>,
-                                   simply::movable, simply::destructible> {};
+                                   simply::destructible> {};
 
   std::vector<simply::dyn<mixins>> values;
   values.emplace_back("Hello, world!"s);

@@ -19,15 +19,17 @@ inline constexpr const auto &fn = simply::impl<Mixin, T>::fn;
 
 template <typename Mixin>
 struct _deduce_t {
+
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define SIMPLY_PERFECT_FORWARD(...)                                            \
+  noexcept(noexcept(__VA_ARGS__))->decltype(__VA_ARGS__) { return __VA_ARGS__; }
+
   template <typename T, typename... Args>
-  static constexpr auto operator()(T &&self, Args &&...args) noexcept(noexcept(
-      simply::fn<Mixin, std::remove_cvref_t<T>>(std::forward<T>(self),
-                                                std::forward<Args>(args)...)))
-      -> decltype(simply::fn<Mixin, std::remove_cvref_t<T>>(
-          std::forward<T>(self), std::forward<Args>(args)...)) {
-    return simply::fn<Mixin, std::remove_cvref_t<T>>(
-        std::forward<T>(self), std::forward<Args>(args)...);
-  }
+  static constexpr auto operator()(T &&self, Args &&...args)
+      SIMPLY_PERFECT_FORWARD(simply::fn<Mixin, std::remove_cvref_t<T>>(
+          std::forward<T>(self), std::forward<Args>(args)...))
+
+#undef SIMPLY_PERFECT_FORWARD
 };
 
 template <typename Mixin>

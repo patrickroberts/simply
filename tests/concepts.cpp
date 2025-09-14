@@ -62,7 +62,8 @@ static_assert(constructible_from_in_place<unusable, immovable>);
 static_assert(constructible_from_in_place<unusable, indestructible>);
 
 static_assert(not simply::copy_constructible<unusable>);
-static_assert(not simply::move_constructible<unusable>);
+// move constructible because allocator_storage
+static_assert(simply::move_constructible<unusable>);
 static_assert(not std::is_destructible_v<unusable>);
 
 static_assert(constructible_from_in_place<copyable, semiregular>);
@@ -75,7 +76,8 @@ static_assert(constructible_from_in_place<copyable, indestructible>);
 #endif
 
 static_assert(simply::copy_constructible<copyable>);
-static_assert(not simply::move_constructible<copyable>);
+// move constructible because allocator_storage
+static_assert(simply::move_constructible<copyable>);
 static_assert(not std::is_destructible_v<copyable>);
 
 static_assert(constructible_from_in_place<movable, semiregular>);
@@ -97,5 +99,6 @@ static_assert(constructible_from_in_place<destructible, immovable>);
 static_assert(not constructible_from_in_place<destructible, indestructible>);
 
 static_assert(not simply::copy_constructible<destructible>);
-static_assert(not simply::move_constructible<destructible>);
+// move constructible because allocator_storage
+static_assert(simply::move_constructible<destructible>);
 static_assert(std::is_destructible_v<destructible>);
