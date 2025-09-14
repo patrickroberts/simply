@@ -1,6 +1,7 @@
 #include <simply/copyable.hpp>
 #include <simply/destructible.hpp>
 #include <simply/dyn.hpp>
+#include <simply/movable.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -11,7 +12,7 @@ template <char Label>
 struct counter {
   counter() = default;
   constexpr counter(const counter &other) : copied(other.copied + 1) {}
-  counter(counter &&other) = delete;
+  counter(counter &&other) noexcept = default;
 
   auto operator=(const counter &) -> counter & = delete;
   auto operator=(counter &&) -> counter & = delete;
@@ -60,9 +61,9 @@ struct simply::iface<labeled<LabelT>, Self> {
 
 // test dyn<countable> at compile-time
 static_assert([] {
-  struct countable : simply::composes<copy_countable<int>, labeled<char>,
-                                      simply::copyable, simply::destructible> {
-  };
+  struct countable
+      : simply::composes<copy_countable<int>, labeled<char>, simply::copyable,
+                         simply::movable, simply::destructible> {};
 
   // initialize a vector of dyn<countable> with three different counter types
   std::vector<simply::dyn<countable>> v;
