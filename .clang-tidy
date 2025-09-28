@@ -6,6 +6,5 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
-  -cppcoreguidelines-owning-memory,
   -readability-identifier-length,
 WarningsAsErrors: "*"
